@@ -1,0 +1,22 @@
+# Core
+pydantic>=2.6
+python-dotenv>=1.0
+pyyaml>=6.0
+
+# Document ingestion
+pdfplumber>=0.11       # text-layer PDF parsing, page-level extraction
+pymupdf>=1.24          # fallback PDF engine / render pages to images for OCR
+pytesseract>=0.3.10    # OCR engine (needs the Tesseract binary installed separately, see README)
+Pillow>=10.3           # image handling for OCR
+openpyxl>=3.1          # .xlsx, cell-level access
+python-docx>=1.1       # .docx documents
+
+# Model provider
+anthropic>=0.40
+
+# CLI
+click>=8.1
+
+# Testing
+pytest>=8.0
+pytest-cov>=5.0

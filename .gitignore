@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+
+# Env/secrets
+.env
+
+# Generated at run time — never commit a model output or web cache
+cache/
+outputs/
+*.log
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# NOTE: data/provided/ (the data rooms, rulebook, etc.) is intentionally
+# NOT ignored — it's synthetic test data and the grader likely wants it
+# reproducible from the repo. Revisit if the scanned-page PDFs turn out
+# to be large enough to bloat the repo.
