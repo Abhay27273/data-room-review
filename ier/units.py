@@ -5,7 +5,6 @@ _NUMBER = r"[-+]?\d{1,3}(?:,\d{3})*(?:\.\d+)?|[-+]?\d+(?:\.\d+)?"
 _UNIT = r"\$?/?[A-Za-z]+(?:[/-][A-Za-z]+)*|%"
 _QUANTITY_RE = re.compile(rf"(?P<currency>\$)?\s*(?P<number>{_NUMBER})\s*(?P<unit>{_UNIT})?")
 
-
 _ALIASES = {
     "kw": "kW", "kilowatt": "kW", "kilowatts": "kW",
     "mw": "MW", "megawatt": "MW", "megawatts": "MW",
@@ -34,7 +33,6 @@ _DIMENSION = {
     "$/kW": "price_per_power",
 }
 
-
 _FACTOR = {
     "kW": 1, "MW": 1_000,
     "kWh": 1, "MWh": 1_000, "GWh": 1_000_000,
@@ -42,18 +40,12 @@ _FACTOR = {
     "h": 1, "day": 24, "yr": 8_760,
     "cycles": 1,
     "$": 1,
-    "$/kWh": 1, "$/MWh": 0.001,  
+    "$/kWh": 1, "$/MWh": 0.001,
     "$/kW": 1,
 }
 
 
 def parse_quantity(raw_text: str) -> tuple[Optional[float], Optional[str]]:
-    """Pull a (value, unit) pair out of free text, e.g. '4.2 MWh' -> (4.2, 'MWh').
-
-    Doesn't try to resolve ranges like '250-300 kW' - picks up the first
-    number only, and unit usually comes back None since the dash breaks
-    the match right after it. Good enough for this POC; flag if it bites.
-    """
     if not raw_text:
         return None, None
 
@@ -69,15 +61,14 @@ def parse_quantity(raw_text: str) -> tuple[Optional[float], Optional[str]]:
     unit = match.group("unit")
     if match.group("currency"):
         if unit and unit.startswith("/"):
-            unit = f"${unit}"      
+            unit = f"${unit}"
         elif not unit:
-            unit = "$"              
+            unit = "$"
 
     return value, unit
 
 
 def normalize_unit(unit: str) -> str:
-    """Canonicalize a unit spelling, e.g. 'percent'/'pct' -> '%'. Raises on unknown units."""
     key = re.sub(r"[\s_-]", "", unit.strip().lower())
     try:
         return _ALIASES[key]
@@ -86,8 +77,6 @@ def normalize_unit(unit: str) -> str:
 
 
 def convert(value: float, from_unit: str, to_unit: str) -> float:
-    """Convert between units of the same dimension; raises if they're not
-    compatible (e.g. kW -> kWh is power vs energy, not a unit conversion)."""
     from_canon = normalize_unit(from_unit)
     to_canon = normalize_unit(to_unit)
 

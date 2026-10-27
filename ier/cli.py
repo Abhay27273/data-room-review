@@ -1,17 +1,30 @@
-"""
-Command-line entry point.
+import json
+from dataclasses import asdict
+from pathlib import Path
 
-TODO(you): wire up two subcommands with click or argparse:
-  - `run`      : process one data room end-to-end -> evidence register,
-                 check results, impact-claim results, report.
-  - `evaluate` : run `run` across the labeled test data rooms and print
-                 the evaluation metrics from ier.evaluation.metrics.
+import click
 
-Keep this file thin — it should only parse args and call into the
-pipeline modules, not contain any parsing/checking logic itself.
-"""
+from ier.ingestion import ParserRegistry, PdfParser, SpreadsheetParser
 
 
-def main() -> None:
-    """Entry point, invoked as `python -m ier.cli`."""
-    raise NotImplementedError
+@click.group()
+def main():
+    pass
+
+
+@main.command()
+@click.option("--data-room", required=True, type=click.Path(exists=True, path_type=Path))
+@click.option("--out", required=True, type=click.Path(path_type=Path))
+def ingest(data_room: Path, out: Path):
+    registry = ParserRegistry([PdfParser(), SpreadsheetParser()])
+    facts, unparsed = registry.parse_data_room(data_room)
+
+    out.mkdir(parents=True, exist_ok=True)
+    (out / "facts.json").write_text(json.dumps([asdict(f) for f in facts], indent=2, default=str))
+    (out / "unparsed.json").write_text(json.dumps([str(p) for p in unparsed], indent=2))
+
+    click.echo(f"extracted {len(facts)} facts, {len(unparsed)} files unparsed")
+
+
+if __name__ == "__main__":
+    main()

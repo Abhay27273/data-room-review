@@ -1,12 +1,8 @@
-"""
-TODO(you): replace this with the real structure once you have the provided
-report format. Placeholder sections per the brief: scope and documents
-reviewed; technical review; commercial review; risk and safety; impact
-claims; findings ranked by severity (each with evidence + what would
-resolve it); questions for the company; readiness view.
-"""
-
 from dataclasses import dataclass, field
+
+from ier.checks import CheckResult
+from ier.evidence import EvidenceRegister
+from ier.impact_claims import ImpactClaimResult
 
 
 @dataclass
@@ -27,3 +23,12 @@ class Report:
     findings: list[Finding] = field(default_factory=list)
     questions_for_company: list[str] = field(default_factory=list)
     readiness_view: str = ""
+
+
+def build_report(register: EvidenceRegister, check_results: list[CheckResult],
+                  impact_results: list[ImpactClaimResult], readiness) -> Report:
+    raise NotImplementedError
+
+
+def render_markdown(report: Report) -> str:
+    raise NotImplementedError
